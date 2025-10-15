@@ -1,0 +1,96 @@
+import { StyleSheet } from "react-native";
+
+export const shapeGameStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+    alignItems: "center",
+    // justifyContent: "center",
+    paddingHorizontal: 20,
+    // paddingVertical: 80,
+    paddingVertical: 55,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "90%",
+    marginTop: 60,
+    marginBottom: 30,
+  },
+  backButton: {
+    backgroundColor: "#2563EB",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  backButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  scoreText: {
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "#1E40AF",
+  },
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "90%",
+    gap: 20,
+  },
+  shapeContainer: {
+    width: 120,
+    height: 120,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+  circleShape: {
+    width: 90,
+    height: 90,
+    backgroundColor: "#883dbeff",
+    borderRadius: 50,
+  },
+  squareShape: {
+    width: 90,
+    height: 90,
+    backgroundColor: "#d64747ff",
+  },
+  rectangleShape: {
+    width: 130,
+    height: 80,
+    backgroundColor: "#2a9d73ff",
+  },
+  triangleShape: {
+    width: 0,
+    height: 0,
+    backgroundColor: "transparent",
+    borderLeftWidth: 50,
+    borderRightWidth: 50,
+    borderBottomWidth: 90,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "#e1a91bff",
+  },
+  crossMark: {
+    position: "absolute",
+    fontSize: 60,
+    color: "#ffffff",
+    fontWeight: "900",
+  },
+  feedbackText: {
+    fontSize: 50,
+    fontWeight: "bold",
+    color: "#FF5722",
+    marginTop: 50,
+    textAlign: "center",
+  },
+  rewardItem: {
+    position: "absolute",
+    top: 0,
+    zIndex: 999,
+  },
+});

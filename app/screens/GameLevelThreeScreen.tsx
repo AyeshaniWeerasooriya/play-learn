@@ -40,6 +40,7 @@ const pictureSet = [
   require("@/assets/ant.png"),
   require("@/assets/pencil.png"),
   require("@/assets/birthday-cake.png"),
+  require("@/assets/clouds.png"),
 ];
 
 const GameLevelThreeScreen: React.FC = () => {
@@ -57,7 +58,6 @@ const GameLevelThreeScreen: React.FC = () => {
     const baseIndex = Math.floor(Math.random() * pictureSet.length);
     let diffIndex = Math.floor(Math.random() * pictureSet.length);
 
-    // ensure the different one isn’t same as base
     while (diffIndex === baseIndex) {
       diffIndex = Math.floor(Math.random() * pictureSet.length);
     }

@@ -15,20 +15,20 @@ export const pictureGameStyles = StyleSheet.create({
     marginBottom: 30,
   },
   backButton: {
-    backgroundColor: "#2563EB",
-    paddingVertical: 6,
+    backgroundColor: "#c3f3daff",
     paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 8,
   },
   backButtonText: {
-    color: "white",
+    color: "#047857",
     fontWeight: "bold",
     fontSize: 18,
   },
   scoreText: {
     fontSize: 25,
     fontWeight: "bold",
-    color: "#1E40AF",
+    color: "#059669",
   },
   grid: {
     flexDirection: "row",

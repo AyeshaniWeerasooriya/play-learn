@@ -1,8 +1,12 @@
+import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
+  BackHandler,
   Dimensions,
+  Image,
+  Modal,
   Text,
   TouchableOpacity,
   View,
@@ -25,7 +29,6 @@ interface RewardAnimation {
 }
 
 const { width, height } = Dimensions.get("window");
-
 const shapes = ["circle", "square", "triangle", "rectangle"] as const;
 const emojiItems = ["🎈", "🎉", "✨", "⭐", "🎊"];
 const winMessages = ["Great job!", "Awesome!", "Super!", "Well done!"];
@@ -33,10 +36,88 @@ const tryAgainMessages = ["Nice try!", "Try again!", "Almost!"];
 
 const GameLevelTwoScreen: React.FC = () => {
   const router = useRouter();
+
   const [shapeSet, setShapeSet] = useState<Shape[]>([]);
   const [score, setScore] = useState(0);
+  const [lastLevelUpScore, setLastLevelUpScore] = useState(0);
   const [rewardElements, setRewardElements] = useState<RewardAnimation[]>([]);
   const [feedbackText, setFeedbackText] = useState<string>("");
+  const [showLevelUp, setShowLevelUp] = useState(false);
+
+  const winSound = useRef<Audio.Sound | null>(null);
+  const wrongSound = useRef<Audio.Sound | null>(null);
+  const clickSound = useRef<Audio.Sound | null>(null);
+  const levelUpSound = useRef<Audio.Sound | null>(null);
+
+  useEffect(() => {
+    const backAction = () => {
+      router.replace("/screens/LevelSelectionScreen");
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  useEffect(() => {
+    const loadSounds = async () => {
+      try {
+        winSound.current = new Audio.Sound();
+        wrongSound.current = new Audio.Sound();
+        clickSound.current = new Audio.Sound();
+        levelUpSound.current = new Audio.Sound();
+
+        await winSound.current.loadAsync(require("@/assets/sounds/win.mp3"));
+        await wrongSound.current.loadAsync(
+          require("@/assets/sounds/wrong.mp3")
+        );
+        await clickSound.current.loadAsync(
+          require("@/assets/sounds/click.mp3")
+        );
+        await levelUpSound.current.loadAsync(
+          require("@/assets/sounds/level-up.mp3")
+        );
+      } catch (error) {
+        console.warn("🎧 Error loading sounds:", error);
+      }
+    };
+    loadSounds();
+
+    return () => {
+      winSound.current?.unloadAsync();
+      wrongSound.current?.unloadAsync();
+      clickSound.current?.unloadAsync();
+      levelUpSound.current?.unloadAsync();
+    };
+  }, []);
+
+  const safePlay = async (sound: Audio.Sound | null) => {
+    try {
+      if (!sound) return;
+      const status = await sound.getStatusAsync();
+      if (!status.isLoaded) return;
+      await sound.replayAsync();
+    } catch (error) {
+      console.warn("Audio play error:", error);
+    }
+  };
+
+  const playClickSound = () => safePlay(clickSound.current);
+  const playWinSound = () => safePlay(winSound.current);
+  const playWrongSound = () => safePlay(wrongSound.current);
+  const playLevelUpSound = async () => {
+    if (!levelUpSound.current) return;
+    try {
+      await levelUpSound.current.setStatusAsync({ volume: 1.0 });
+      await levelUpSound.current.replayAsync();
+    } catch (error) {
+      console.warn("Level-up sound play error:", error);
+    }
+  };
 
   useEffect(() => {
     generateShapes();
@@ -44,30 +125,41 @@ const GameLevelTwoScreen: React.FC = () => {
 
   const generateShapes = () => {
     const baseShape = shapes[Math.floor(Math.random() * shapes.length)];
-
     let diffShape = baseShape;
     while (diffShape === baseShape) {
       diffShape = shapes[Math.floor(Math.random() * shapes.length)];
     }
-
     const diffIndex = Math.floor(Math.random() * 4);
-
     const newShapes: Shape[] = Array.from({ length: 4 }).map((_, i) => ({
       id: i,
       type: i === diffIndex ? diffShape : baseShape,
       isDifferent: i === diffIndex,
       isIncorrect: false,
     }));
-
     setShapeSet(newShapes);
   };
 
   const handlePress = (index: number) => {
+    playClickSound();
     const updated = [...shapeSet];
     const selected = updated[index];
 
     if (selected.isDifferent) {
-      setScore((prev) => prev + 1);
+      playWinSound();
+
+      setScore((prev) => {
+        const newScore = prev + 10;
+
+        // Level-up modal check every 100 points
+        if (newScore % 100 === 0 && newScore !== lastLevelUpScore) {
+          setShowLevelUp(true);
+          setLastLevelUpScore(newScore);
+          playLevelUpSound();
+        }
+
+        return newScore;
+      });
+
       showRewardAnimation();
 
       const msg = winMessages[Math.floor(Math.random() * winMessages.length)];
@@ -76,6 +168,7 @@ const GameLevelTwoScreen: React.FC = () => {
 
       setTimeout(generateShapes, 1500);
     } else {
+      playWrongSound();
       updated[index].isIncorrect = true;
       setShapeSet(updated);
 
@@ -94,7 +187,6 @@ const GameLevelTwoScreen: React.FC = () => {
 
   const showRewardAnimation = () => {
     const newAnimations: RewardAnimation[] = [];
-
     for (let i = 0; i < 10; i++) {
       const animValue = new Animated.Value(0);
       const randomX = Math.random() * (width - 50);
@@ -113,7 +205,6 @@ const GameLevelTwoScreen: React.FC = () => {
         setRewardElements((curr) => curr.filter((a) => a.id !== id));
       });
     }
-
     setRewardElements((curr) => [...curr, ...newAnimations]);
   };
 
@@ -136,7 +227,10 @@ const GameLevelTwoScreen: React.FC = () => {
     <View style={shapeGameStyles.container}>
       <View style={shapeGameStyles.header}>
         <TouchableOpacity
-          onPress={() => router.replace("screens/LevelSelectionScreen" as any)}
+          onPress={async () => {
+            await playClickSound();
+            router.replace("screens/LevelSelectionScreen" as any);
+          }}
           style={shapeGameStyles.backButton}
         >
           <Text style={shapeGameStyles.backButtonText}>Levels</Text>
@@ -178,6 +272,48 @@ const GameLevelTwoScreen: React.FC = () => {
           {item.emoji}
         </Animated.Text>
       ))}
+
+      {/* Level-up Modal */}
+      <Modal visible={showLevelUp} transparent animationType="fade">
+        <View style={shapeGameStyles.modalOverlay}>
+          <View style={shapeGameStyles.modalContent}>
+            <Text style={shapeGameStyles.modalTitle}>Congratulations!</Text>
+            <Image
+              source={require("@/assets/firework.png")}
+              style={shapeGameStyles.image}
+            />
+            <Text style={shapeGameStyles.modalMessage}>
+              You can upgrade to the next level.
+            </Text>
+
+            <View style={shapeGameStyles.modalButtons}>
+              <TouchableOpacity
+                style={shapeGameStyles.modalButton}
+                onPress={async () => {
+                  await playClickSound();
+                  // Example: push to Level Three if exists
+                  router.push("/screens/GameLevelThreeScreen");
+                  setShowLevelUp(false);
+                }}
+              >
+                <Text style={shapeGameStyles.modalButtonText}>Next Level</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={shapeGameStyles.modalButton}
+                onPress={async () => {
+                  await playClickSound();
+                  setShowLevelUp(false);
+                }}
+              >
+                <Text style={shapeGameStyles.modalButtonText}>
+                  Keep Playing
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

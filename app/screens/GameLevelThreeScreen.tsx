@@ -1,9 +1,12 @@
+import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
+  BackHandler,
   Dimensions,
   Image,
+  Modal,
   Text,
   TouchableOpacity,
   View,
@@ -45,10 +48,88 @@ const pictureSet = [
 
 const GameLevelThreeScreen: React.FC = () => {
   const router = useRouter();
+
   const [pictures, setPictures] = useState<PictureItem[]>([]);
   const [score, setScore] = useState(0);
+  const [lastLevelUpScore, setLastLevelUpScore] = useState(0);
   const [rewardElements, setRewardElements] = useState<RewardAnimation[]>([]);
   const [feedbackText, setFeedbackText] = useState<string>("");
+  const [showLevelUp, setShowLevelUp] = useState(false);
+
+  const winSound = useRef<Audio.Sound | null>(null);
+  const wrongSound = useRef<Audio.Sound | null>(null);
+  const clickSound = useRef<Audio.Sound | null>(null);
+  const levelUpSound = useRef<Audio.Sound | null>(null);
+
+  useEffect(() => {
+    const backAction = () => {
+      router.replace("/screens/LevelSelectionScreen");
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  useEffect(() => {
+    const loadSounds = async () => {
+      try {
+        winSound.current = new Audio.Sound();
+        wrongSound.current = new Audio.Sound();
+        clickSound.current = new Audio.Sound();
+        levelUpSound.current = new Audio.Sound();
+
+        await winSound.current.loadAsync(require("@/assets/sounds/win.mp3"));
+        await wrongSound.current.loadAsync(
+          require("@/assets/sounds/wrong.mp3")
+        );
+        await clickSound.current.loadAsync(
+          require("@/assets/sounds/click.mp3")
+        );
+        await levelUpSound.current.loadAsync(
+          require("@/assets/sounds/level-up.mp3")
+        );
+      } catch (error) {
+        console.warn("Error loading sounds:", error);
+      }
+    };
+    loadSounds();
+
+    return () => {
+      winSound.current?.unloadAsync();
+      wrongSound.current?.unloadAsync();
+      clickSound.current?.unloadAsync();
+      levelUpSound.current?.unloadAsync();
+    };
+  }, []);
+
+  const safePlay = async (sound: Audio.Sound | null) => {
+    try {
+      if (!sound) return;
+      const status = await sound.getStatusAsync();
+      if (!status.isLoaded) return;
+      await sound.replayAsync();
+    } catch (error) {
+      console.warn("Audio play error:", error);
+    }
+  };
+
+  const playClickSound = () => safePlay(clickSound.current);
+  const playWinSound = () => safePlay(winSound.current);
+  const playWrongSound = () => safePlay(wrongSound.current);
+  const playLevelUpSound = async () => {
+    if (!levelUpSound.current) return;
+    try {
+      await levelUpSound.current.setStatusAsync({ volume: 1.0 });
+      await levelUpSound.current.replayAsync();
+    } catch (error) {
+      console.warn("Level-up sound play error:", error);
+    }
+  };
 
   useEffect(() => {
     generatePictures();
@@ -57,13 +138,11 @@ const GameLevelThreeScreen: React.FC = () => {
   const generatePictures = () => {
     const baseIndex = Math.floor(Math.random() * pictureSet.length);
     let diffIndex = Math.floor(Math.random() * pictureSet.length);
-
     while (diffIndex === baseIndex) {
       diffIndex = Math.floor(Math.random() * pictureSet.length);
     }
 
     const diffPosition = Math.floor(Math.random() * 4);
-
     const newSet: PictureItem[] = Array.from({ length: 4 }).map((_, i) => ({
       id: i,
       image: i === diffPosition ? pictureSet[diffIndex] : pictureSet[baseIndex],
@@ -75,11 +154,26 @@ const GameLevelThreeScreen: React.FC = () => {
   };
 
   const handlePress = (index: number) => {
+    playClickSound();
     const updated = [...pictures];
     const selected = updated[index];
 
     if (selected.isDifferent) {
-      setScore(score + 1);
+      playWinSound();
+
+      setScore((prev) => {
+        const newScore = prev + 10;
+
+        // Level-up modal check
+        if (newScore % 100 === 0 && newScore !== lastLevelUpScore) {
+          setShowLevelUp(true);
+          setLastLevelUpScore(newScore);
+          playLevelUpSound();
+        }
+
+        return newScore;
+      });
+
       showRewardAnimation();
 
       const message =
@@ -88,6 +182,7 @@ const GameLevelThreeScreen: React.FC = () => {
       setTimeout(() => setFeedbackText(""), 1800);
       setTimeout(generatePictures, 1500);
     } else {
+      playWrongSound();
       updated[index].isIncorrect = true;
       setPictures(updated);
 
@@ -105,7 +200,6 @@ const GameLevelThreeScreen: React.FC = () => {
 
   const showRewardAnimation = () => {
     const newAnimations: RewardAnimation[] = [];
-
     for (let i = 0; i < 10; i++) {
       const animValue = new Animated.Value(0);
       const randomX = Math.random() * (width - 50);
@@ -121,20 +215,20 @@ const GameLevelThreeScreen: React.FC = () => {
         duration,
         useNativeDriver: true,
       }).start(() => {
-        setRewardElements((current) =>
-          current.filter((item) => item.id !== id)
-        );
+        setRewardElements((curr) => curr.filter((item) => item.id !== id));
       });
     }
-
-    setRewardElements((current) => [...current, ...newAnimations]);
+    setRewardElements((curr) => [...curr, ...newAnimations]);
   };
 
   return (
     <View style={pictureGameStyles.container}>
       <View style={pictureGameStyles.header}>
         <TouchableOpacity
-          onPress={() => router.replace("screens/LevelSelectionScreen" as any)}
+          onPress={async () => {
+            await playClickSound();
+            router.replace("screens/LevelSelectionScreen" as any);
+          }}
           style={pictureGameStyles.backButton}
         >
           <Text style={pictureGameStyles.backButtonText}>Levels</Text>
@@ -176,6 +270,50 @@ const GameLevelThreeScreen: React.FC = () => {
           {item.emoji}
         </Animated.Text>
       ))}
+
+      {/* Level-up Modal */}
+      <Modal visible={showLevelUp} transparent animationType="fade">
+        <View style={pictureGameStyles.modalOverlay}>
+          <View style={pictureGameStyles.modalContent}>
+            <Text style={pictureGameStyles.modalTitle}>Congratulations!</Text>
+            <Image
+              source={require("@/assets/firework.png")}
+              style={pictureGameStyles.modelImage}
+            />
+            <Text style={pictureGameStyles.modalMessage}>
+              You can upgrade to the first level again.
+            </Text>
+
+            <View style={pictureGameStyles.modalButtons}>
+              <TouchableOpacity
+                style={pictureGameStyles.modalButton}
+                onPress={async () => {
+                  await playClickSound();
+                  // Example: push to Level Four if exists
+                  router.push("/screens/GameLevelOneScreen");
+                  setShowLevelUp(false);
+                }}
+              >
+                <Text style={pictureGameStyles.modalButtonText}>
+                  First Level
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={pictureGameStyles.modalButton}
+                onPress={async () => {
+                  await playClickSound();
+                  setShowLevelUp(false);
+                }}
+              >
+                <Text style={pictureGameStyles.modalButtonText}>
+                  Keep Playing
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

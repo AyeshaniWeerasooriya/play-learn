@@ -10,7 +10,7 @@ export const indexStyles = StyleSheet.create({
   logo: {
     width: 180,
     height: 180,
-    marginBottom: 20,
+    marginBottom: 5,
   },
   title: {
     fontSize: 36,

@@ -5,16 +5,15 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "playlearn",
-    "icon": "./assets/Logo.png",
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/Logo.png",
-        "backgroundColor": "#E6F4FE"
+        "backgroundColor": "#F7F9FC"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -27,7 +26,22 @@
     "web": {
       "output": "static"
     },
-    "plugins": ["expo-router", "expo-audio"],
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/Logo.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#F7F9FC",
+          "dark": {
+            "backgroundColor": "#000000"
+          }
+        }
+      ],
+      "expo-audio"
+    ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

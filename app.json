@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "scheme": "playlearn",
     "userInterfaceStyle": "automatic",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Logo.png",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true

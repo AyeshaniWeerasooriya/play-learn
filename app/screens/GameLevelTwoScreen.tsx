@@ -15,7 +15,7 @@ import { shapeGameStyles } from "./GameLevelTwoScreen.styles";
 
 interface Shape {
   id: number;
-  type: "circle" | "square" | "triangle" | "rectangle";
+  type: "circle" | "square" | "triangle";
   isDifferent: boolean;
   isIncorrect: boolean;
 }
@@ -29,7 +29,7 @@ interface RewardAnimation {
 }
 
 const { width, height } = Dimensions.get("window");
-const shapes = ["circle", "square", "triangle", "rectangle"] as const;
+const shapes = ["circle", "square", "triangle"] as const;
 const emojiItems = ["🎈", "🎉", "✨", "⭐", "🎊"];
 const winMessages = ["Great job!", "Awesome!", "Super!", "Well done!"];
 const tryAgainMessages = ["Nice try!", "Try again!", "Almost!"];
@@ -129,8 +129,8 @@ const GameLevelTwoScreen: React.FC = () => {
     while (diffShape === baseShape) {
       diffShape = shapes[Math.floor(Math.random() * shapes.length)];
     }
-    const diffIndex = Math.floor(Math.random() * 4);
-    const newShapes: Shape[] = Array.from({ length: 4 }).map((_, i) => ({
+    const diffIndex = Math.floor(Math.random() * 3);
+    const newShapes: Shape[] = Array.from({ length: 3 }).map((_, i) => ({
       id: i,
       type: i === diffIndex ? diffShape : baseShape,
       isDifferent: i === diffIndex,
@@ -150,7 +150,6 @@ const GameLevelTwoScreen: React.FC = () => {
       setScore((prev) => {
         const newScore = prev + 10;
 
-        // Level-up modal check every 100 points
         if (newScore % 100 === 0 && newScore !== lastLevelUpScore) {
           setShowLevelUp(true);
           setLastLevelUpScore(newScore);
@@ -214,8 +213,6 @@ const GameLevelTwoScreen: React.FC = () => {
         return <View style={shapeGameStyles.circleShape} />;
       case "square":
         return <View style={shapeGameStyles.squareShape} />;
-      case "rectangle":
-        return <View style={shapeGameStyles.rectangleShape} />;
       case "triangle":
         return <View style={shapeGameStyles.triangleShape} />;
       default:
@@ -225,6 +222,9 @@ const GameLevelTwoScreen: React.FC = () => {
 
   return (
     <View style={shapeGameStyles.container}>
+      <View style={shapeGameStyles.textHeader}>
+        <Text style={shapeGameStyles.headerText}>Find the Different Shape</Text>
+      </View>
       <View style={shapeGameStyles.header}>
         <TouchableOpacity
           onPress={async () => {

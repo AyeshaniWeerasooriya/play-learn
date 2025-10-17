@@ -8,6 +8,15 @@ export const gameStyles = StyleSheet.create({
     paddingVertical: 55,
     paddingHorizontal: 20,
   },
+  textHeader: {
+    marginHorizontal: 10,
+    marginVertical: 35,
+  },
+  headerText: {
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "#0c0596ff",
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",

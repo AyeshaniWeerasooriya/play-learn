@@ -1,44 +1,36 @@
 import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+
+SplashScreen.preventAutoHideAsync(); // Keep the native splash until we hide it manually
 
 export default function RootLayout() {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      SplashScreen.hideAsync(); // Hide the Expo splash quickly
+    }, 500); // 0.5s after app load
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen
-        name="screens/SplashScreen"
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
         name="screens/LevelSelectionScreen"
-        options={{
-          headerShown: true,
-          title: "Select Levels",
-          headerLeft: () => null,
-        }}
+        options={{ headerShown: false, title: "Select Levels" }}
       />
       <Stack.Screen
         name="screens/GameLevelOneScreen"
-        options={{
-          headerShown: true,
-          title: "Find the Different Color",
-          headerLeft: () => null,
-        }}
+        options={{ headerShown: false, title: "Find the Different Color" }}
       />
       <Stack.Screen
         name="screens/GameLevelTwoScreen"
-        options={{
-          headerShown: true,
-          title: "Find the Different Shape",
-          headerLeft: () => null,
-        }}
+        options={{ headerShown: false, title: "Find the Different Shape" }}
       />
       <Stack.Screen
         name="screens/GameLevelThreeScreen"
-        options={{
-          headerShown: true,
-          title: "Find the Different Picture",
-          headerLeft: () => null,
-        }}
+        options={{ headerShown: false, title: "Find the Different Picture" }}
       />
     </Stack>
   );

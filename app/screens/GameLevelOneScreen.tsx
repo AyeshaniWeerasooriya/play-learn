@@ -220,6 +220,9 @@ const GameLevelOneScreen: React.FC = () => {
 
   return (
     <View style={gameStyles.container}>
+      <View style={gameStyles.textHeader}>
+        <Text style={gameStyles.headerText}>Find the Different Color</Text>
+      </View>
       <View style={gameStyles.header}>
         <TouchableOpacity
           onPress={async () => {

@@ -7,6 +7,15 @@ export const pictureGameStyles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 60,
   },
+  textHeader: {
+    marginHorizontal: 10,
+    marginVertical: 35,
+  },
+  headerText: {
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "#0c0596ff",
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",

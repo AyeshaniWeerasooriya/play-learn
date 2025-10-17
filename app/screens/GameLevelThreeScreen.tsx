@@ -223,6 +223,11 @@ const GameLevelThreeScreen: React.FC = () => {
 
   return (
     <View style={pictureGameStyles.container}>
+      <View style={pictureGameStyles.textHeader}>
+        <Text style={pictureGameStyles.headerText}>
+          Find the Different Picture
+        </Text>
+      </View>
       <View style={pictureGameStyles.header}>
         <TouchableOpacity
           onPress={async () => {

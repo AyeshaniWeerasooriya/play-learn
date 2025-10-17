@@ -28,13 +28,13 @@ export const levelStyles = StyleSheet.create({
     elevation: 3,
   },
   level1: {
-    backgroundColor: "#ec4899", // pink
+    backgroundColor: "#ec4899",
   },
   level2: {
-    backgroundColor: "#f59e0b", // amber
+    backgroundColor: "#f59e0b",
   },
   level3: {
-    backgroundColor: "#8b5cf6", // purple
+    backgroundColor: "#8b5cf6",
   },
   levelText: {
     fontSize: 20,

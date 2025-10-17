@@ -1,18 +1,6 @@
 import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
-
-SplashScreen.preventAutoHideAsync(); // Keep the native splash until we hide it manually
 
 export default function RootLayout() {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      SplashScreen.hideAsync(); // Hide the Expo splash quickly
-    }, 500); // 0.5s after app load
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />

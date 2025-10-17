@@ -164,7 +164,6 @@ const GameLevelThreeScreen: React.FC = () => {
       setScore((prev) => {
         const newScore = prev + 10;
 
-        // Level-up modal check
         if (newScore % 100 === 0 && newScore !== lastLevelUpScore) {
           setShowLevelUp(true);
           setLastLevelUpScore(newScore);

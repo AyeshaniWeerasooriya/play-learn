@@ -1,17 +1,29 @@
 import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { BackHandler, Text, TouchableOpacity, View } from "react-native";
 import { levelStyles } from "./LevelSelectionScreen.styles";
 
 const LevelSelectionScreen: React.FC = () => {
   const router = useRouter();
 
-  // --- Sound reference ---
   const clickSound = useRef<Audio.Sound | null>(null);
 
   useEffect(() => {
-    // Preload click sound once
+    const backAction = () => {
+      BackHandler.exitApp();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  useEffect(() => {
     const loadClickSound = async () => {
       const sound = new Audio.Sound();
       await sound.loadAsync(require("@/assets/sounds/click.mp3"));
@@ -20,7 +32,6 @@ const LevelSelectionScreen: React.FC = () => {
 
     loadClickSound();
 
-    // Cleanup on unmount
     return () => {
       if (clickSound.current) clickSound.current.unloadAsync();
     };
@@ -36,10 +47,9 @@ const LevelSelectionScreen: React.FC = () => {
     }
   };
 
-  // --- Navigation handlers with click sound ---
   const handleLevelPress = async (path: string) => {
     await playClickSound();
-    setTimeout(() => router.push(path as any), 150); // small delay for sound
+    setTimeout(() => router.push(path as any), 150);
   };
 
   return (

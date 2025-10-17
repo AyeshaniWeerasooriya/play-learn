@@ -1,10 +1,11 @@
 {
   "expo": {
-    "name": "play-learn",
+    "name": "Play Learn",
     "slug": "play-learn",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "playlearn",
+    "icon": "./assets/Logo.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -12,6 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
+        "foregroundImage": "./assets/Logo.png",
         "backgroundColor": "#E6F4FE"
       },
       "edgeToEdgeEnabled": true,
@@ -25,22 +27,7 @@
     "web": {
       "output": "static"
     },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/Logo.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
-        }
-      ],
-      "expo-audio"
-    ],
+    "plugins": ["expo-router", "expo-audio"],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

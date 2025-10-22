@@ -1,3 +1,5 @@
+import * as ScreenOrientation from "expo-screen-orientation";
+
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
@@ -5,6 +7,13 @@ import { useEffect } from "react";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  useEffect(() => {
+    const allowBoth = async () => {
+      await ScreenOrientation.unlockAsync();
+    };
+    allowBoth();
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       SplashScreen.hideAsync();
@@ -30,6 +39,10 @@ export default function RootLayout() {
       <Stack.Screen
         name="screens/GameLevelThreeScreen"
         options={{ headerShown: false, title: "Find the Different Picture" }}
+      />
+      <Stack.Screen
+        name="screens/GameLevelFourScreen"
+        options={{ headerShown: false, title: "Find the Rotated Picture" }}
       />
     </Stack>
   );

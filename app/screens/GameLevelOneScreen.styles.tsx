@@ -5,7 +5,7 @@ export const gameStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f0fdf4",
     alignItems: "center",
-    paddingVertical: 55,
+
     paddingHorizontal: 20,
   },
   textHeader: {
@@ -25,15 +25,23 @@ export const gameStyles = StyleSheet.create({
     marginBottom: 30,
   },
   scoreText: {
-    fontSize: 25,
+    fontSize: 28,
     fontWeight: "bold",
     color: "#059669",
+    backgroundColor: "#c3f3daff",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+
+    justifyContent: "center",
   },
   backButton: {
     backgroundColor: "#c3f3daff",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
+
+    justifyContent: "center",
   },
   backButtonText: {
     color: "#047857",
@@ -45,7 +53,7 @@ export const gameStyles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "center",
     alignItems: "center",
-    width: "90%",
+    width: "100%",
   },
   circle: {
     width: 120,
@@ -74,7 +82,7 @@ export const gameStyles = StyleSheet.create({
     fontSize: 50,
     fontWeight: "bold",
     color: "#FF5722",
-    marginTop: 50,
+    marginTop: 20,
     textAlign: "center",
   },
 

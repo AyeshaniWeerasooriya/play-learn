@@ -1,5 +1,6 @@
 import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
+import * as ScreenOrientation from "expo-screen-orientation";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -29,10 +30,10 @@ interface RewardAnimation {
 }
 
 const baseColorSets = [
-  ["#0a38a2ff", "#60A5FA"],
-  ["#078c2dff", "#34D399"],
-  ["#b10808ff", "#F87171"],
-  ["#d47407ff", "#FBBF24"],
+  ["#0a0ab3ff", "#fafa0eff"],
+  ["#e10b0bff", "#049604ff"],
+  ["#e1780eff", "#ad13efff"],
+  ["#e41182ff", "#000000"],
 ];
 
 const emojiItems = ["🎈", "🎈", "🎉", "✨", "⭐", "🎊"];
@@ -54,6 +55,16 @@ const GameLevelOneScreen: React.FC = () => {
   const wrongSound = useRef<Audio.Sound | null>(null);
   const clickSound = useRef<Audio.Sound | null>(null);
   const levelUpSound = useRef<Audio.Sound | null>(null);
+
+  useEffect(() => {
+    const lockLandscape = async () => {
+      await ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.LANDSCAPE
+      );
+    };
+    lockLandscape();
+  }, []);
+
   useEffect(() => {
     const backAction = () => {
       router.replace("/screens/LevelSelectionScreen");
@@ -129,9 +140,9 @@ const GameLevelOneScreen: React.FC = () => {
   const generateColors = () => {
     const [baseColor, diffColor] =
       baseColorSets[Math.floor(Math.random() * baseColorSets.length)];
-    const correctIndex = Math.floor(Math.random() * 4);
+    const correctIndex = Math.floor(Math.random() * 5);
 
-    const newCircles: Circle[] = Array.from({ length: 4 }).map((_, i) => ({
+    const newCircles: Circle[] = Array.from({ length: 5 }).map((_, i) => ({
       id: i,
       color: i === correctIndex ? diffColor : baseColor,
       isDifferent: i === correctIndex,
@@ -220,9 +231,6 @@ const GameLevelOneScreen: React.FC = () => {
 
   return (
     <View style={gameStyles.container}>
-      <View style={gameStyles.textHeader}>
-        <Text style={gameStyles.headerText}>Find the Different Color</Text>
-      </View>
       <View style={gameStyles.header}>
         <TouchableOpacity
           onPress={async () => {
@@ -233,7 +241,7 @@ const GameLevelOneScreen: React.FC = () => {
         >
           <Text style={gameStyles.backButtonText}>Levels</Text>
         </TouchableOpacity>
-        <Text style={gameStyles.scoreText}>Score: {score}</Text>
+        <Text style={gameStyles.scoreText}>{score}</Text>
       </View>
 
       <View style={gameStyles.grid}>

@@ -5,10 +5,9 @@ export const shapeGameStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F9FAFB",
     alignItems: "center",
-    // justifyContent: "center",
     paddingHorizontal: 20,
-    // paddingVertical: 80,
   },
+
   textHeader: {
     marginHorizontal: 10,
     marginVertical: 35,
@@ -17,6 +16,7 @@ export const shapeGameStyles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
     color: "#0c0596ff",
+    textAlign: "center",
   },
   header: {
     flexDirection: "row",
@@ -46,9 +46,9 @@ export const shapeGameStyles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
-
     justifyContent: "center",
   },
+
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -64,22 +64,32 @@ export const shapeGameStyles = StyleSheet.create({
     justifyContent: "center",
     position: "relative",
   },
-  circleShape: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+
+  squareShape: {
+    width: 95,
+    height: 95,
+    backgroundColor: "#000",
     margin: 12,
-    backgroundColor: "#883dbeff",
     justifyContent: "center",
     alignItems: "center",
   },
-  squareShape: {
-    width: 110,
-    height: 110,
-    backgroundColor: "#d64747ff",
+
+  rectangleShape: {
+    width: 120,
+    height: 70,
+    backgroundColor: "#000",
     margin: 12,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  diamondShape: {
+    width: 95,
+    height: 95,
+    backgroundColor: "#000",
+    margin: 12,
+    transform: [{ rotate: "45deg" }],
+    borderRadius: 10,
   },
 
   triangleShape: {
@@ -94,12 +104,14 @@ export const shapeGameStyles = StyleSheet.create({
     borderBottomColor: "#000",
     margin: 12,
   },
+
   crossMark: {
     position: "absolute",
     fontSize: 60,
     color: "#ffffff",
     fontWeight: "900",
   },
+
   feedbackText: {
     fontSize: 50,
     fontWeight: "bold",
@@ -107,6 +119,7 @@ export const shapeGameStyles = StyleSheet.create({
     marginTop: 20,
     textAlign: "center",
   },
+
   rewardItem: {
     position: "absolute",
     top: 0,
@@ -136,12 +149,14 @@ export const shapeGameStyles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
+    color: "#630D70",
   },
   modalMessage: {
     fontSize: 18,
     marginBottom: 20,
     textAlign: "center",
     marginTop: 20,
+    color: "#333",
   },
   modalButtons: {
     flexDirection: "row",
@@ -162,8 +177,9 @@ export const shapeGameStyles = StyleSheet.create({
     fontSize: 16,
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     resizeMode: "contain",
+    marginBottom: 10,
   },
 });

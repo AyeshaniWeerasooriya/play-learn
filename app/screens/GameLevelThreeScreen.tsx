@@ -1,5 +1,6 @@
 import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
+import * as ScreenOrientation from "expo-screen-orientation";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -60,6 +61,15 @@ const GameLevelThreeScreen: React.FC = () => {
   const wrongSound = useRef<Audio.Sound | null>(null);
   const clickSound = useRef<Audio.Sound | null>(null);
   const levelUpSound = useRef<Audio.Sound | null>(null);
+
+  useEffect(() => {
+    const lockLandscape = async () => {
+      await ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.LANDSCAPE
+      );
+    };
+    lockLandscape();
+  }, []);
 
   useEffect(() => {
     const backAction = () => {
@@ -222,11 +232,6 @@ const GameLevelThreeScreen: React.FC = () => {
 
   return (
     <View style={pictureGameStyles.container}>
-      <View style={pictureGameStyles.textHeader}>
-        <Text style={pictureGameStyles.headerText}>
-          Find the Different Picture
-        </Text>
-      </View>
       <View style={pictureGameStyles.header}>
         <TouchableOpacity
           onPress={async () => {
@@ -237,7 +242,7 @@ const GameLevelThreeScreen: React.FC = () => {
         >
           <Text style={pictureGameStyles.backButtonText}>Levels</Text>
         </TouchableOpacity>
-        <Text style={pictureGameStyles.scoreText}>Score: {score}</Text>
+        <Text style={pictureGameStyles.scoreText}> {score}</Text>
       </View>
 
       <View style={pictureGameStyles.grid}>
@@ -294,7 +299,7 @@ const GameLevelThreeScreen: React.FC = () => {
                 onPress={async () => {
                   await playClickSound();
                   // Example: push to Level Four if exists
-                  router.push("/screens/GameLevelOneScreen");
+                  router.push("/screens/GameLevelFourScreen");
                   setShowLevelUp(false);
                 }}
               >

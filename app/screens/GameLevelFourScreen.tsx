@@ -12,11 +12,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { shapeGameStyles } from "./GameLevelTwoScreen.styles";
+import { shapeGameStyles } from "./GameLevelFourScreen.styles";
 
 interface Shape {
   id: number;
-  type: "circle" | "square" | "triangle";
+  rotation: number;
   isDifferent: boolean;
   isIncorrect: boolean;
 }
@@ -30,30 +30,35 @@ interface RewardAnimation {
 }
 
 const { width, height } = Dimensions.get("window");
-const shapes = ["circle", "square", "triangle"] as const;
-const emojiItems = ["🎈", "🎉", "✨", "⭐", "🎊"];
-const winMessages = ["Great job!", "Awesome!", "Super!", "Well done!"];
-const tryAgainMessages = ["Nice try!", "Try again!", "Almost!"];
+
+const shapes = ["square", "diamond", "triangle", "rectangle"] as const;
 
 const rainbowColors = [
-  "#FF0000",
-  "#FF7F00",
-  "#f3f300ff",
-  "#17a817ff",
-  "#0000FF",
-  "#4B0082",
-  "#8B00FF",
+  "#FF0000", // Red
+  "#FF7F00", // Orange
+  "#FFFF00", // Yellow
+  "#00FF00", // Green
+  "#0000FF", // Blue
+  "#4B0082", // Indigo
+  "#8B00FF", // Violet
 ];
 
-const GameLevelTwoScreen: React.FC = () => {
+const emojiItems = ["🎈", "🎉", "✨", "⭐", "🎊"];
+const winMessages = ["Awesome!", "Well done!", "Super!", "Great job!"];
+const tryAgainMessages = ["Try again!", "Almost!", "Keep going!"];
+
+const GameLevelFourScreen: React.FC = () => {
   const router = useRouter();
 
-  const [shapeSet, setShapeSet] = useState<Shape[]>([]);
+  const [shapeType, setShapeType] = useState<
+    "square" | "diamond" | "triangle" | "rectangle"
+  >("square");
   const [shapeColor, setShapeColor] = useState<string>("#FF0000");
+  const [shapesSet, setShapesSet] = useState<Shape[]>([]);
   const [score, setScore] = useState(0);
   const [lastLevelUpScore, setLastLevelUpScore] = useState(0);
-  const [rewardElements, setRewardElements] = useState<RewardAnimation[]>([]);
   const [feedbackText, setFeedbackText] = useState<string>("");
+  const [rewardElements, setRewardElements] = useState<RewardAnimation[]>([]);
   const [showLevelUp, setShowLevelUp] = useState(false);
 
   const winSound = useRef<Audio.Sound | null>(null);
@@ -75,12 +80,10 @@ const GameLevelTwoScreen: React.FC = () => {
       router.replace("/screens/LevelSelectionScreen");
       return true;
     };
-
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
-
     return () => backHandler.remove();
   }, []);
 
@@ -103,7 +106,7 @@ const GameLevelTwoScreen: React.FC = () => {
           require("@/assets/sounds/level-up.mp3")
         );
       } catch (error) {
-        console.warn("🎧 Error loading sounds:", error);
+        console.warn("Sound load error:", error);
       }
     };
     loadSounds();
@@ -130,83 +133,89 @@ const GameLevelTwoScreen: React.FC = () => {
   const playClickSound = () => safePlay(clickSound.current);
   const playWinSound = () => safePlay(winSound.current);
   const playWrongSound = () => safePlay(wrongSound.current);
-  const playLevelUpSound = async () => {
-    if (!levelUpSound.current) return;
-    try {
-      await levelUpSound.current.setStatusAsync({ volume: 1.0 });
-      await levelUpSound.current.replayAsync();
-    } catch (error) {
-      console.warn("Level-up sound play error:", error);
-    }
-  };
+  const playLevelUpSound = () => safePlay(levelUpSound.current);
 
   useEffect(() => {
     generateShapes();
   }, []);
 
   const generateShapes = () => {
-    const baseShape = shapes[Math.floor(Math.random() * shapes.length)];
-    let diffShape = baseShape;
-    while (diffShape === baseShape) {
-      diffShape = shapes[Math.floor(Math.random() * shapes.length)];
-    }
-    const diffIndex = Math.floor(Math.random() * 5);
+    const newShapeType =
+      shapes[Math.floor(Math.random() * shapes.length)] || "square";
+    setShapeType(newShapeType);
 
     const newColor =
       rainbowColors[Math.floor(Math.random() * rainbowColors.length)];
     setShapeColor(newColor);
 
+    const baseRotation = Math.random() > 0.5 ? 0 : 180;
+
+    let diffRotation = 0;
+    switch (newShapeType) {
+      case "triangle":
+        diffRotation = baseRotation === 0 ? 180 : 0;
+        break;
+      case "square":
+        diffRotation = baseRotation === 0 ? 45 : 225;
+        break;
+      case "rectangle":
+        diffRotation = baseRotation === 0 ? 90 : 270;
+        break;
+      case "diamond":
+        diffRotation = baseRotation === 0 ? 45 : 225;
+        break;
+      default:
+        diffRotation = baseRotation === 0 ? 45 : 225;
+    }
+
+    const diffIndex = Math.floor(Math.random() * 5);
+
     const newShapes: Shape[] = Array.from({ length: 5 }).map((_, i) => ({
       id: i,
-      type: i === diffIndex ? diffShape : baseShape,
+      rotation: i === diffIndex ? diffRotation : baseRotation,
       isDifferent: i === diffIndex,
       isIncorrect: false,
     }));
 
-    setShapeSet(newShapes);
+    setShapesSet(newShapes);
   };
 
   const handlePress = (index: number) => {
     playClickSound();
-    const updated = [...shapeSet];
+    const updated = [...shapesSet];
     const selected = updated[index];
 
     if (selected.isDifferent) {
       playWinSound();
-
       setScore((prev) => {
         const newScore = prev + 10;
-
         if (newScore % 100 === 0 && newScore !== lastLevelUpScore) {
           setShowLevelUp(true);
           setLastLevelUpScore(newScore);
           playLevelUpSound();
         }
-
         return newScore;
       });
 
       showRewardAnimation();
-
-      const msg = winMessages[Math.floor(Math.random() * winMessages.length)];
-      setFeedbackText(msg);
+      setFeedbackText(
+        winMessages[Math.floor(Math.random() * winMessages.length)]
+      );
       setTimeout(() => setFeedbackText(""), 1500);
-
       setTimeout(generateShapes, 1500);
     } else {
       playWrongSound();
       updated[index].isIncorrect = true;
-      setShapeSet(updated);
-
-      const msg =
-        tryAgainMessages[Math.floor(Math.random() * tryAgainMessages.length)];
-      setFeedbackText(msg);
+      setShapesSet(updated);
+      setFeedbackText(
+        tryAgainMessages[Math.floor(Math.random() * tryAgainMessages.length)]
+      );
       setTimeout(() => setFeedbackText(""), 1500);
 
       setTimeout(() => {
         const reset = [...updated];
         reset[index].isIncorrect = false;
-        setShapeSet(reset);
+        setShapesSet(reset);
       }, 800);
     }
   };
@@ -218,7 +227,7 @@ const GameLevelTwoScreen: React.FC = () => {
       const randomX = Math.random() * (width - 50);
       const duration = 2000 + Math.random() * 1000;
       const emoji = emojiItems[Math.floor(Math.random() * emojiItems.length)];
-      const fontSize = Math.random() * 50 + 25;
+      const fontSize = Math.random() * 40 + 25;
       const id = `emoji-${Date.now()}-${i}`;
 
       newAnimations.push({ id, animValue, emoji, randomX, fontSize });
@@ -235,22 +244,28 @@ const GameLevelTwoScreen: React.FC = () => {
   };
 
   const renderShape = (shape: Shape) => {
-    switch (shape.type) {
-      case "circle":
-        return (
-          <View
-            style={[
-              shapeGameStyles.circleShape,
-              { backgroundColor: shapeColor },
-            ]}
-          />
-        );
+    const rotationStyle = { transform: [{ rotate: `${shape.rotation}deg` }] };
+
+    switch (shapeType) {
       case "square":
         return (
           <View
             style={[
               shapeGameStyles.squareShape,
               { backgroundColor: shapeColor },
+              rotationStyle,
+            ]}
+          />
+        );
+      case "diamond":
+        return (
+          <View
+            style={[
+              shapeGameStyles.squareShape,
+              {
+                backgroundColor: shapeColor,
+                transform: [{ rotate: `${45 + shape.rotation}deg` }],
+              },
             ]}
           />
         );
@@ -260,6 +275,17 @@ const GameLevelTwoScreen: React.FC = () => {
             style={[
               shapeGameStyles.triangleShape,
               { borderBottomColor: shapeColor },
+              rotationStyle,
+            ]}
+          />
+        );
+      case "rectangle":
+        return (
+          <View
+            style={[
+              shapeGameStyles.rectangleShape,
+              { backgroundColor: shapeColor },
+              rotationStyle,
             ]}
           />
         );
@@ -274,7 +300,7 @@ const GameLevelTwoScreen: React.FC = () => {
         <TouchableOpacity
           onPress={async () => {
             await playClickSound();
-            router.replace("screens/LevelSelectionScreen" as any);
+            router.replace("/screens/LevelSelectionScreen");
           }}
           style={shapeGameStyles.backButton}
         >
@@ -284,7 +310,7 @@ const GameLevelTwoScreen: React.FC = () => {
       </View>
 
       <View style={shapeGameStyles.grid}>
-        {shapeSet.map((shape, index) => (
+        {shapesSet.map((shape, index) => (
           <TouchableOpacity
             key={shape.id}
             style={shapeGameStyles.shapeContainer}
@@ -335,7 +361,7 @@ const GameLevelTwoScreen: React.FC = () => {
                 style={shapeGameStyles.modalButton}
                 onPress={async () => {
                   await playClickSound();
-                  router.push("/screens/GameLevelThreeScreen");
+                  router.push("/screens/GameLevelOneScreen");
                   setShowLevelUp(false);
                 }}
               >
@@ -361,4 +387,4 @@ const GameLevelTwoScreen: React.FC = () => {
   );
 };
 
-export default GameLevelTwoScreen;
+export default GameLevelFourScreen;

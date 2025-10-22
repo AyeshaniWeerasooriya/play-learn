@@ -5,7 +5,6 @@ export const pictureGameStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F9FAFB",
     alignItems: "center",
-    paddingVertical: 60,
   },
   textHeader: {
     marginHorizontal: 10,
@@ -28,6 +27,8 @@ export const pictureGameStyles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
+
+    justifyContent: "center",
   },
   backButtonText: {
     color: "#047857",
@@ -35,9 +36,15 @@ export const pictureGameStyles = StyleSheet.create({
     fontSize: 18,
   },
   scoreText: {
-    fontSize: 25,
+    fontSize: 28,
     fontWeight: "bold",
     color: "#059669",
+    backgroundColor: "#c3f3daff",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+
+    justifyContent: "center",
   },
   grid: {
     flexDirection: "row",
@@ -69,7 +76,7 @@ export const pictureGameStyles = StyleSheet.create({
     fontSize: 45,
     fontWeight: "bold",
     color: "#FF5722",
-    marginTop: 50,
+    marginTop: 20,
     textAlign: "center",
   },
   rewardItem: {

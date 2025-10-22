@@ -1,6 +1,7 @@
 import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -34,13 +35,13 @@ const { width, height } = Dimensions.get("window");
 const shapes = ["square", "diamond", "triangle", "rectangle"] as const;
 
 const rainbowColors = [
-  "#FF0000", // Red
-  "#FF7F00", // Orange
-  "#FFFF00", // Yellow
-  "#00FF00", // Green
-  "#0000FF", // Blue
-  "#4B0082", // Indigo
-  "#8B00FF", // Violet
+  "#FF0000",
+  "#FF7F00",
+  "#fdda0d",
+  "#17a817ff",
+  "#0000FF",
+  "#f412a1ff",
+  "#8B00FF",
 ];
 
 const emojiItems = ["🎈", "🎉", "✨", "⭐", "🎊"];
@@ -318,7 +319,11 @@ const GameLevelFourScreen: React.FC = () => {
           >
             {renderShape(shape)}
             {shape.isIncorrect && (
-              <Text style={shapeGameStyles.crossMark}>✖</Text>
+              <X
+                style={shapeGameStyles.crossMark}
+                size={70}
+                color={"#ffffff"}
+              />
             )}
           </TouchableOpacity>
         ))}

@@ -1,5 +1,7 @@
 import { StyleSheet } from "react-native";
-
+export const ICON_SIZE = 40;
+export const ICON_COLOR = "#FFFFFF";
+export const CIRCLE_DIAMETER = 70;
 export const pictureGameStyles = StyleSheet.create({
   container: {
     flex: 1,
@@ -65,6 +67,29 @@ export const pictureGameStyles = StyleSheet.create({
     width: 130,
     height: 130,
     resizeMode: "contain",
+  },
+  errorCircle: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+
+    transform: [
+      { translateX: -(CIRCLE_DIAMETER / 2) },
+      { translateY: -(CIRCLE_DIAMETER / 2) },
+    ],
+
+    width: CIRCLE_DIAMETER,
+    height: CIRCLE_DIAMETER,
+    borderRadius: CIRCLE_DIAMETER / 2,
+
+    backgroundColor: "rgba(255, 0, 0, 0.8)",
+    borderWidth: 3,
+    borderColor: "#FFFFFF",
+
+    justifyContent: "center",
+    alignItems: "center",
+
+    zIndex: 10,
   },
   crossMark: {
     position: "absolute",

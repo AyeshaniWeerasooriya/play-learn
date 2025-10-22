@@ -1,6 +1,7 @@
 import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -38,10 +39,10 @@ const tryAgainMessages = ["Nice try!", "Try again!", "Almost!"];
 const rainbowColors = [
   "#FF0000",
   "#FF7F00",
-  "#f3f300ff",
+  "#fdda0d",
   "#17a817ff",
   "#0000FF",
-  "#4B0082",
+  "#f412a1ff",
   "#8B00FF",
 ];
 
@@ -292,7 +293,11 @@ const GameLevelTwoScreen: React.FC = () => {
           >
             {renderShape(shape)}
             {shape.isIncorrect && (
-              <Text style={shapeGameStyles.crossMark}>✖</Text>
+              <X
+                style={shapeGameStyles.crossMark}
+                color={"#ffffff"}
+                size={70}
+              />
             )}
           </TouchableOpacity>
         ))}

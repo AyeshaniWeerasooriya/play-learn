@@ -68,10 +68,8 @@ export const gameStyles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 6,
   },
-  crossMark: {
-    fontSize: 60,
+  crossMarkIcon: {
     color: "#fff",
-    fontWeight: "900",
   },
   rewardItem: {
     position: "absolute",

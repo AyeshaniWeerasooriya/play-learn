@@ -1,6 +1,7 @@
 import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -12,7 +13,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { pictureGameStyles } from "./GameLevelThreeScreen.styles";
+import {
+  ICON_COLOR,
+  ICON_SIZE,
+  pictureGameStyles,
+} from "./GameLevelThreeScreen.styles";
 
 interface PictureItem {
   id: number;
@@ -254,7 +259,9 @@ const GameLevelThreeScreen: React.FC = () => {
           >
             <Image source={pic.image} style={pictureGameStyles.image} />
             {pic.isIncorrect && (
-              <Text style={pictureGameStyles.crossMark}>✖</Text>
+              <View style={pictureGameStyles.errorCircle}>
+                <X size={ICON_SIZE} color={ICON_COLOR} />
+              </View>
             )}
           </TouchableOpacity>
         ))}

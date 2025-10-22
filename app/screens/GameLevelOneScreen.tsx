@@ -1,6 +1,7 @@
 import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -30,7 +31,7 @@ interface RewardAnimation {
 }
 
 const baseColorSets = [
-  ["#0a0ab3ff", "#fafa0eff"],
+  ["#0a0ab3ff", "#fdda0d"],
   ["#e10b0bff", "#049604ff"],
   ["#e1780eff", "#ad13efff"],
   ["#e41182ff", "#000000"],
@@ -251,7 +252,7 @@ const GameLevelOneScreen: React.FC = () => {
             style={[gameStyles.circle, { backgroundColor: circle.color }]}
             onPress={() => handlePress(index)}
           >
-            {circle.isIncorrect && <Text style={gameStyles.crossMark}>✖</Text>}
+            {circle.isIncorrect && <X color={"#ffffff"} size={70} />}
           </TouchableOpacity>
         ))}
       </View>

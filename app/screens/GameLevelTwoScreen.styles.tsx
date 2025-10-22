@@ -94,9 +94,10 @@ export const shapeGameStyles = StyleSheet.create({
     borderBottomColor: "#000",
     margin: 12,
   },
+
   crossMark: {
     position: "absolute",
-    fontSize: 60,
+    fontSize: 80,
     color: "#ffffff",
     fontWeight: "900",
   },

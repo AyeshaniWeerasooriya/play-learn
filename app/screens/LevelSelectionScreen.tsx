@@ -1,4 +1,3 @@
-// LevelSelectionScreen.tsx
 import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
@@ -10,7 +9,6 @@ const LevelSelectionScreen: React.FC = () => {
   const router = useRouter();
   const clickSound = useRef<Audio.Sound | null>(null);
 
-  // 🧭 Lock to landscape when entering
   useEffect(() => {
     const lockLandscape = async () => {
       await ScreenOrientation.lockAsync(
@@ -20,7 +18,6 @@ const LevelSelectionScreen: React.FC = () => {
     lockLandscape();
   }, []);
 
-  // Exit app when pressing hardware back
   useEffect(() => {
     const backAction = () => {
       BackHandler.exitApp();
@@ -33,7 +30,6 @@ const LevelSelectionScreen: React.FC = () => {
     return () => backHandler.remove();
   }, []);
 
-  // 🔊 Sound setup
   useEffect(() => {
     const loadClickSound = async () => {
       const sound = new Audio.Sound();
